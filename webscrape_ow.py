@@ -8,7 +8,7 @@ from datetime import datetime
 
 #----------VARIABLE DECLARATIONS ----------#
 hero_urls = []
-json_set = []
+json_dict = []
 
 def get_heroes():
     # Begin making the soup from BeautifulSoup and call teh HTML Requests
@@ -32,6 +32,7 @@ def page_scrape(arg):
     response = requests.get(url)
     html = response.content
     soup = BeautifulSoup(html)
+    # Need to grab the name of the hero and format proper JSON
     stat_titles = soup.findAll('h3',attrs={'class':'pi-data-label pi-secondary-font'})
     stat_values = soup.findAll('div', attrs={'class':'pi-data-value pi-font'})
 
@@ -41,7 +42,8 @@ def page_scrape(arg):
         t =  stat_titles[l].find('b').text
         hero_lib[t] = v
         l = l + 1
-    json_set.append(hero_lib)
+    print hero_lib
+    json_dict.append(hero_lib)
     # df = pd.DataFrame(hero_lib)
     # print df
     # print 'SCRAPPED!'
@@ -60,5 +62,14 @@ for el in hero_urls:
     customURL = 'http://overwatch.wikia.com'+ el
     page_scrape(customURL)
 
-json_string = json.dumps(json_set)
-print json_string[0]
+
+#----------------------------#
+#---Output Data to file(s)---#
+#----------------------------#
+
+#Print to JSON
+print json_dict[0]['Difficulty:']
+json_string = json.dumps(json_dict)
+
+with open('data.json', 'w') as outfile:
+    json.dump(json_string, outfile)
